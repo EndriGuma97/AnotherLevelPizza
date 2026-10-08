@@ -7,6 +7,7 @@ import { mkdir, readdir, rm } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { emblemSvg } from '../src/icons.mjs';
+import { logoSvg } from '../src/logo.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = path.join(root, 'photos-original');
@@ -111,7 +112,11 @@ async function icons() {
     .composite([{ input: inner, left: 56, top: 56 }])
     .png()
     .toFile(path.join(dir, 'icon-maskable-512.png'));
-  console.log('✓ app icons');
+  // Logo for structured data (Google shows it on white): light version, transparent.
+  await sharp(Buffer.from(logoSvg({ variant: 'light', width: 1200 })))
+    .png()
+    .toFile(path.join(dir, 'logo.png'));
+  console.log('✓ app icons + logo');
 }
 
 run()

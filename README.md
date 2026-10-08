@@ -21,6 +21,7 @@ npm run dev            # build + start → http://localhost:3000
 | Menu items, prices, ingredients | `src/content/menu.mjs` |
 | All interface text (AL / EN / IT) | `src/content/i18n.mjs` |
 | Photos | put originals in `photos-original/`, then `npm run images` |
+| Logo (outlined SVG, header + footer) | `src/logo.mjs` — ready-to-use logo files for print/social are in `brand/` |
 
 Run `npm run build` after any change.
 

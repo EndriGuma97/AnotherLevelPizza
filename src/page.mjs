@@ -2,7 +2,8 @@ import { site } from './content/site.mjs';
 import { categories } from './content/menu.mjs';
 import { googleRating, mentions, reviews } from './content/reviews.mjs';
 import { LANGS, LANG_META, dictFor, formatPrice } from './content/i18n.mjs';
-import { icon, logoMark, sealSvg } from './icons.mjs';
+import { icon, sealSvg } from './icons.mjs';
+import { logoSvg } from './logo.mjs';
 
 // Replaced by the server at request time with the public origin (SITE_URL / Railway domain).
 export const SITE_URL = '__SITE_URL__';
@@ -68,7 +69,7 @@ function jsonLd(lang, d) {
       `${SITE_URL}/images/about-1600.jpg`,
       `${SITE_URL}/images/hero-1920.jpg`,
     ],
-    logo: `${SITE_URL}/icons/icon-512.png`,
+    logo: `${SITE_URL}/icons/logo.png`,
     priceRange: '60–2200 ALL',
     currenciesAccepted: 'ALL',
     servesCuisine: ['Pizza', 'Fast Food', 'Albanian', 'Grill', 'Mediterranean'],
@@ -260,8 +261,7 @@ ${LANGS.filter((l) => l !== lang).map((l) => `<meta property="og:locale:alternat
   <div class="mx-auto max-w-7xl px-3 pt-3 sm:px-6 sm:pt-4">
     <nav class="nav-shell" aria-label="${t('a11y.primaryNav')}" data-i18n-attr="aria-label:a11y.primaryNav">
       <a href="#top" class="brand" aria-label="${t('a11y.home')}" data-i18n-attr="aria-label:a11y.home">
-        ${logoMark('brand-emblem size-11 shrink-0')}
-        <span class="brand-text"><span class="brand-word">Another <span class="brand-accent">Level</span></span><span class="brand-tag">Pizzeria · Fast Food</span></span>
+        ${logoSvg({ cls: 'brand-logo', id: 'logo-nav' })}
       </a>
       <ul class="hidden items-center gap-1 lg:flex" role="list">
         ${navLinks.map(([id, key]) => `<li><a class="nav-link" href="#${id}" data-spy-link="${id}">${T(key)}</a></li>`).join('')}
@@ -653,7 +653,7 @@ ${LANGS.filter((l) => l !== lang).map((l) => `<meta property="og:locale:alternat
   <div class="mx-auto max-w-7xl px-5 sm:px-8">
     <div class="grid gap-12 md:grid-cols-12">
       <div class="md:col-span-5">
-        <a href="#top" class="inline-flex items-center gap-4 text-white" aria-label="${t('a11y.home')}" data-i18n-attr="aria-label:a11y.home">${sealSvg({ cls: 'footer-seal size-24 shrink-0', id: 'seal-footer', spin: true })}<span><span class="block font-display text-3xl font-extrabold tracking-tight">Another <span class="text-oak-300">Level</span></span><span class="mt-1 block text-xs font-bold uppercase tracking-[0.2em] text-white/50">Pizzeria · Fast Food</span></span></a>
+        <a href="#top" class="footer-brand" aria-label="${t('a11y.home')}" data-i18n-attr="aria-label:a11y.home">${logoSvg({ cls: 'footer-logo', id: 'logo-footer' })}</a>
         <p class="mt-5 max-w-sm" data-i18n="footer.tagline">${t('footer.tagline')}</p>
         <div class="mt-6 flex gap-2">
           <a href="${site.instagram}" target="_blank" rel="noopener" class="social-btn" aria-label="Instagram">${icon('instagram', 'size-5')}</a>

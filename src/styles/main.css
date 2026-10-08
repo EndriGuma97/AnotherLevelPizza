@@ -65,6 +65,10 @@
   --color-sage-800: #3b4430;
   --color-sage-900: #32392a;
 
+  /* Logo accent: tomato red (drop shade, pepperoni dot, name on light backgrounds) */
+  --color-tomato-500: #c8452c;
+  --color-tomato-800: #7f2a1b;
+
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
@@ -297,46 +301,60 @@
     border-color: rgb(17 20 19 / 0.07);
     box-shadow: 0 14px 36px -22px rgb(17 20 19 / 0.45);
   }
+  /* Logo (src/logo.mjs): parts are coloured from these properties so the same
+     inline SVG serves dark and light surfaces. Defaults = on-dark version. */
+  .logo {
+    --logo-word: var(--color-oak-50);
+    --logo-shade: var(--color-tomato-500);
+    --logo-dot: var(--color-tomato-500);
+    --logo-dot-shade: var(--color-tomato-800);
+    --logo-name: var(--color-oak-300);
+    --logo-star: var(--color-oak-300);
+    display: block;
+    width: auto;
+    aspect-ratio: 772.2 / 290.9;
+    overflow: visible;
+  }
+  .logo-word { fill: var(--logo-word); }
+  .logo-shade { fill: var(--logo-shade); }
+  .logo-dot { fill: var(--logo-dot); }
+  .logo-dot-shade { fill: var(--logo-dot-shade); }
+  .logo-name { fill: var(--logo-name); }
+  .logo-star { fill: var(--logo-star); }
+  .logo-word,
+  .logo-name,
+  .logo-star {
+    transition: fill 0.45s;
+  }
+  .site-header[data-theme="light"] .logo {
+    --logo-word: var(--color-char-900);
+    --logo-name: var(--color-tomato-500);
+    --logo-star: var(--color-char-900);
+  }
   .brand {
     display: flex;
     align-items: center;
-    gap: 0.65rem;
     min-height: 2.75rem;
+    padding-inline: 0.2rem;
     border-radius: 999px;
   }
-  .brand-text {
-    display: flex;
-    flex-direction: column;
-    line-height: 1;
-  }
-  .brand-tag {
-    margin-top: 0.3rem;
-    font-size: 0.6rem;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    opacity: 0.6;
-    white-space: nowrap;
-  }
-  .brand-emblem {
+  .brand-logo {
+    height: 3.125rem;
+    margin-block: -0.2rem;
     transition: transform 0.7s var(--ease-spring);
   }
-  .brand:hover .brand-emblem {
-    transform: rotate(-12deg) scale(1.06);
+  .brand:hover .brand-logo {
+    transform: rotate(-3deg) scale(1.04);
   }
-  .brand-word {
-    font-family: var(--font-display);
-    font-weight: 800;
-    font-size: 1.125rem;
-    letter-spacing: -0.03em;
-    white-space: nowrap;
+  @media (min-width: 640px) {
+    .brand-logo {
+      height: 3.5rem;
+    }
   }
-  .brand-accent {
-    color: var(--color-oak-300);
-    transition: color 0.45s;
-  }
-  .site-header[data-theme="light"] .brand-accent {
-    color: var(--color-oak-600);
+  @media (min-width: 1024px) {
+    .brand-logo {
+      height: 3.75rem;
+    }
   }
   .nav-link {
     position: relative;
@@ -755,8 +773,12 @@
     transform-origin: 50% 50%;
     animation: spin 28s linear infinite;
   }
-  .footer-seal {
-    filter: drop-shadow(0 16px 30px rgb(0 0 0 / 0.5));
+  .footer-brand {
+    display: inline-block;
+    border-radius: 1rem;
+  }
+  .footer-logo {
+    height: 6rem;
   }
   .status-dot {
     position: relative;

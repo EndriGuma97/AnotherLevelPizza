@@ -64,7 +64,7 @@ const SLICE = `
   <circle cx="-15.5" cy="-3.2" r="1.6" fill="none" stroke="${BRAND.olive}" stroke-width="1.5"/>
   <circle cx="-5" cy="16" r="1.4" fill="none" stroke="${BRAND.olive}" stroke-width="1.4"/>`;
 
-// Compact emblem (nav, favicon): slice inside a double oak ring.
+// Compact emblem (favicon, app icons): slice inside a double oak ring.
 export function emblemSvg({ cls = '', standalone = false } = {}) {
   const attrs = standalone
     ? 'xmlns="http://www.w3.org/2000/svg" width="120" height="120"'
@@ -87,6 +87,3 @@ export function sealSvg({ cls = '', id = 'seal', spin = false } = {}) {
     <g transform="translate(60 61.5) scale(.66)">${SLICE}</g>
   </svg>`;
 }
-
-// Back-compat alias used across the templates.
-export const logoMark = (cls = 'size-9') => emblemSvg({ cls });
