@@ -83,6 +83,7 @@ export const categories = [
   {
     id: 'grill',
     icon: 'flame',
+    available: false, // grill closed for now: shown as unavailable, can't be ordered. Delete this line to reopen.
     name: { sq: 'Mish & Zgarë', en: 'Meat & Grill', it: 'Carne & Griglia' },
     blurb: {
       sq: 'Direkt nga zgara, me patate, xaxiq dhe pite.',
@@ -208,9 +209,9 @@ export const categories = [
   },
 ];
 
-// Flat lookup of everything that can be added to an online order (fixed-price items only).
+// Flat lookup of everything that can be added to an online order (fixed-price items in available categories).
 export const orderableItems = Object.fromEntries(
-  categories.flatMap((c) =>
+  categories.filter((c) => c.available !== false).flatMap((c) =>
     c.items.filter((i) => typeof i.price === 'number').map((i) => [i.id, { price: i.price, name: i.name, category: c.id }]),
   ),
 );

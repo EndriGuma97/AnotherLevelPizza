@@ -23,6 +23,10 @@ const IMG = {
   exterior: { widths: [960, 1440, 1920], w: 1440, h: 880 },
 };
 
+// A category switched off in menu.mjs (available: false) is also kept out of the marquee and structured data.
+const openCategories = categories.filter((c) => c.available !== false);
+const grillOpen = openCategories.some((c) => c.id === 'grill');
+
 const STAR = 'M12 2.8l2.75 5.57 6.15.9-4.45 4.33 1.05 6.12L12 16.83l-5.5 2.89 1.05-6.12L3.1 9.27l6.15-.9z';
 
 // Five-star row with fractional fill (e.g. 4.8 → last star 80% filled).
@@ -55,6 +59,8 @@ function jsonLd(lang, d) {
       priceSpecification: { '@type': 'PriceSpecification', minPrice: values[0], maxPrice: values[values.length - 1], priceCurrency: 'ALL' },
     };
   };
+  // Only advertise what can be ordered right now (e.g. no "Grill" while the grill is closed).
+  const openPrices = openCategories.flatMap((c) => c.items.flatMap((i) => i.priceRange || i.priceOptions || [i.price]));
   const data = {
     '@context': 'https://schema.org',
     '@type': 'Restaurant',
@@ -70,9 +76,9 @@ function jsonLd(lang, d) {
       `${SITE_URL}/images/hero-1920.jpg`,
     ],
     logo: `${SITE_URL}/icons/logo.png`,
-    priceRange: '60–2200 ALL',
+    priceRange: `${Math.min(...openPrices)}–${Math.max(...openPrices)} ALL`,
     currenciesAccepted: 'ALL',
-    servesCuisine: ['Pizza', 'Fast Food', 'Albanian', 'Grill', 'Mediterranean'],
+    servesCuisine: ['Pizza', 'Fast Food', 'Albanian', ...(grillOpen ? ['Grill'] : []), 'Mediterranean'],
     address: {
       '@type': 'PostalAddress',
       addressLocality: site.address.locality,
@@ -105,7 +111,7 @@ function jsonLd(lang, d) {
           '@type': 'MenuItem',
           name: item.name[lang],
           ...(item.ingredients.length ? { description: item.ingredients.map((i) => d[`ing.${i}`]).join(', ') } : {}),
-          offers: offer(item),
+          offers: cat.available === false ? { ...offer(item), availability: 'https://schema.org/OutOfStock' } : offer(item),
         })),
       })),
     },
@@ -149,9 +155,9 @@ export function renderPage({ lang, assets, buildYear }) {
     ['visit', 'nav.visit'],
   ];
 
-  const itemCard = (item, index) => {
-    const orderable = typeof item.price === 'number';
-    const values = orderable ? [item.price] : item.priceRange || item.priceOptions;
+  const itemCard = (item, index, off) => {
+    const orderable = typeof item.price === 'number' && !off;
+    const values = typeof item.price === 'number' ? [item.price] : item.priceRange || item.priceOptions;
     const sep = item.priceRange ? '–' : ' / ';
     const badges = [
       item.spicy ? `<span class="badge badge-spicy">${icon('flame', 'size-3.5')}${T('menu.spicy')}</span>` : '',
@@ -167,9 +173,11 @@ export function renderPage({ lang, assets, buildYear }) {
             <button type="button" class="step-btn" data-inc="${item.id}" aria-label="${t('a11y.increase')}" data-i18n-attr="aria-label:a11y.increase">${icon('plus', 'size-4')}</button>
           </div>
         </div>`
-      : `<span class="text-xs font-semibold text-char-500" data-i18n="menu.inStore">${t('menu.inStore')}</span>`;
+      : off
+        ? `<span class="sold-out" data-i18n="menu.unavailable">${t('menu.unavailable')}</span>`
+        : `<span class="text-xs font-semibold text-char-500" data-i18n="menu.inStore">${t('menu.inStore')}</span>`;
     return `<li class="reveal h-full">
-      <article class="menu-card" data-item="${item.id}">
+      <article class="menu-card${off ? ' is-off' : ''}" data-item="${item.id}">
         <div class="flex items-start justify-between gap-4">
           <div class="min-w-0">
             <span class="card-index">${String(index + 1).padStart(2, '0')}</span>
@@ -204,7 +212,7 @@ export function renderPage({ lang, assets, buildYear }) {
     </div>`;
   };
 
-  const marqueeWords = ['Sufllaqe', 'Skepasti', 'Kalzone', 'Shishqebab', 'Pizza', 'Qofte', 'Arabe', 'Xaxiq', 'Sanduiç'];
+  const marqueeWords = ['Sufllaqe', 'Skepasti', 'Kalzone', grillOpen ? 'Shishqebab' : 'Patate', 'Pizza', grillOpen ? 'Qofte' : 'Sallatë', 'Arabe', 'Xaxiq', 'Sanduiç'];
   const marqueeRun = marqueeWords.map((w) => `<span class="marquee-item">${w}</span><span class="marquee-sep">✦</span>`).join('');
 
   return `<!doctype html>
@@ -420,7 +428,7 @@ ${LANGS.filter((l) => l !== lang).map((l) => `<meta property="og:locale:alternat
           ${categories
             .map(
               (c, i) =>
-                `<a href="#cat-${c.id}" class="menu-tab" data-tab="${c.id}"${i === 0 ? ' aria-current="true"' : ''}>${icon(c.icon, 'size-[1.1rem]')}${T(`cat.${c.id}.name`)}<span class="tab-count">${c.items.length}</span></a>`,
+                `<a href="#cat-${c.id}" class="menu-tab${c.available === false ? ' is-off' : ''}" data-tab="${c.id}"${i === 0 ? ' aria-current="true"' : ''}>${icon(c.icon, 'size-[1.1rem]')}${T(`cat.${c.id}.name`)}<span class="tab-count">${c.items.length}</span></a>`,
             )
             .join('')}
         </div>
@@ -438,8 +446,9 @@ ${LANGS.filter((l) => l !== lang).map((l) => `<meta property="og:locale:alternat
           </div>
           <p class="max-w-md text-char-500 sm:text-right" data-i18n="cat.${c.id}.blurb">${t(`cat.${c.id}.blurb`)}</p>
         </header>
+        ${c.available === false ? `<p class="cat-notice">${icon('clock', 'size-4 shrink-0')}${T('menu.catUnavailable')}</p>` : ''}
         <ul class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3" role="list">
-          ${c.items.map(itemCard).join('')}
+          ${c.items.map((item, i) => itemCard(item, i, c.available === false)).join('')}
         </ul>
       </section>`,
         )

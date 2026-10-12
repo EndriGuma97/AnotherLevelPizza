@@ -74,7 +74,7 @@ export function emblemSvg({ cls = '', standalone = false } = {}) {
 
 // Full seal (footer, hero, 404): name set on a circular path around the slice.
 export function sealSvg({ cls = '', id = 'seal', spin = false } = {}) {
-  const text = 'ANOTHER LEVEL ✦ PIZZERIA &amp; FAST FOOD ✦ SARANDË ✦ ';
+  const text = 'PIZZERI FAST FOOD ✦ ANOTHER LEVEL ✦ SARANDË ✦ ';
   return `<svg class="${cls}" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
     <defs><path id="${id}-ring" d="M15 60a45 45 0 1 1 90 0a45 45 0 1 1-90 0"/></defs>
     <circle cx="60" cy="60" r="59.5" fill="${BRAND.ink}"/>

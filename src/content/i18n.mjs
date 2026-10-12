@@ -20,9 +20,9 @@ export const ui = {
     it: 'Another Level Saranda | Migliore Pizzeria a Saranda',
   },
   'meta.description': {
-    sq: 'Piceria më e mirë në Sarandë: sufllaqe, sanduiçë, skepasti, kalzone dhe mish në zgarë. Ushqim i shpejtë dhe porosi ushqimi online — merre vetë ose me dërgesë.',
-    en: 'Best pizza and fast food in Saranda, Albania — gyros, skepasti, calzone & grilled meats made to order. Order online for pickup or delivery, steps from the seafront.',
-    it: 'Dove mangiare a Saranda? Pizzeria e fast food con gyros, skepasti, calzone e carne alla griglia. Cibo da asporto e consegna: ordina online in pochi secondi.',
+    sq: 'Piceria më e mirë në Sarandë: sufllaqe, sanduiçë, skepasti dhe kalzone. Ushqim i shpejtë dhe porosi ushqimi online — merre vetë ose me dërgesë.',
+    en: 'Best pizza and fast food in Saranda, Albania — gyros, sandwiches, skepasti & calzone made to order. Order online for pickup or delivery, steps from the seafront.',
+    it: 'Dove mangiare a Saranda? Pizzeria e fast food con gyros, panini, skepasti e calzone. Cibo da asporto e consegna: ordina online in pochi secondi.',
   },
   'meta.ogAlt': {
     sq: 'Tarraca e Another Level në Sarandë në mbrëmje',
@@ -54,9 +54,9 @@ export const ui = {
   'hero.title1': { sq: 'Shijo', en: 'Taste the', it: 'Gusta il' },
   'hero.title2': { sq: 'nivelin tjetër.', en: 'next level.', it: 'prossimo livello.' },
   'hero.subtitle': {
-    sq: 'Sufllaqe, skepasti, kalzone dhe mish në zgarë — të përgatitura në çast me përbërës të freskët, vetëm pak hapa nga bregdeti i Sarandës.',
-    en: 'Gyros, skepasti, calzone and grilled meats — made to order with fresh ingredients, just a few steps from the Saranda seafront.',
-    it: 'Gyros, skepasti, calzone e carne alla griglia — preparati al momento con ingredienti freschi, a pochi passi dal lungomare di Saranda.',
+    sq: 'Sufllaqe, sanduiçë, skepasti dhe kalzone — të përgatitura në çast me përbërës të freskët, vetëm pak hapa nga bregdeti i Sarandës.',
+    en: 'Gyros, sandwiches, skepasti and calzone — made to order with fresh ingredients, just a few steps from the Saranda seafront.',
+    it: 'Gyros, panini, skepasti e calzone — preparati al momento con ingredienti freschi, a pochi passi dal lungomare di Saranda.',
   },
   'hero.ctaMenu': { sq: 'Shiko menunë', en: 'View menu', it: 'Vedi il menu' },
   'hero.ctaOrder': { sq: 'Porosit tani', en: 'Order now', it: 'Ordina ora' },
@@ -77,9 +77,9 @@ export const ui = {
   'about.eyebrow': { sq: 'Ambienti', en: 'The place', it: 'Il locale' },
   'about.title': { sq: 'Ambient modern. Shije e vërtetë.', en: 'Modern space. Honest flavour.', it: 'Ambiente moderno. Sapore autentico.' },
   'about.body': {
-    sq: 'Dru i ngrohtë, mure në jeshile ulliri dhe një tarracë e ndriçuar butë — Another Level është vendi ku Saranda vjen për të ngrënë mirë, pa komplikime. Çdo porosi përgatitet në çast: mish nga zgara, patate krokante, xaxiq shtëpie dhe pite e ngrohtë.',
-    en: 'Warm wood, olive-green walls and a softly lit terrace — Another Level is where Saranda comes to eat well, without the fuss. Every order is made fresh: meat off the grill, crispy fries, house tzatziki and warm pita.',
-    it: 'Legno caldo, pareti verde oliva e una terrazza dalla luce soffusa — Another Level è il posto dove Saranda viene a mangiare bene, senza complicazioni. Ogni ordine è preparato al momento: carne alla griglia, patatine croccanti, tzatziki della casa e pita calda.',
+    sq: 'Dru i ngrohtë, mure në jeshile ulliri dhe një tarracë e ndriçuar butë — Another Level është vendi ku Saranda vjen për të ngrënë mirë, pa komplikime. Çdo porosi përgatitet në çast: sufllaqe të mbushura mirë, patate krokante, xaxiq shtëpie dhe pite e ngrohtë.',
+    en: 'Warm wood, olive-green walls and a softly lit terrace — Another Level is where Saranda comes to eat well, without the fuss. Every order is made fresh: loaded gyros, crispy fries, house tzatziki and warm pita.',
+    it: 'Legno caldo, pareti verde oliva e una terrazza dalla luce soffusa — Another Level è il posto dove Saranda viene a mangiare bene, senza complicazioni. Ogni ordine è preparato al momento: gyros ben farciti, patatine croccanti, tzatziki della casa e pita calda.',
   },
   'about.f1.title': { sq: 'Të freskëta çdo ditë', en: 'Fresh every day', it: 'Freschi ogni giorno' },
   'about.f1.text': {
@@ -129,6 +129,12 @@ export const ui = {
   'menu.add': { sq: 'Shto', en: 'Add', it: 'Aggiungi' },
   'menu.spicy': { sq: 'Pikant', en: 'Spicy', it: 'Piccante' },
   'menu.inStore': { sq: 'Pyetni në lokal', en: 'Ask in store', it: 'Chiedi al locale' },
+  'menu.unavailable': { sq: 'Jo në dispozicion', en: 'Not available', it: 'Non disponibile' },
+  'menu.catUnavailable': {
+    sq: 'Përkohësisht jo në dispozicion — këto pjata nuk mund të porositen për momentin.',
+    en: 'Temporarily unavailable — these dishes can’t be ordered right now.',
+    it: 'Temporaneamente non disponibile — al momento questi piatti non si possono ordinare.',
+  },
   'menu.currency': { sq: 'Lekë', en: 'Lekë', it: 'Lekë' },
 
   // ---- Reviews ----

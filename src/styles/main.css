@@ -308,26 +308,30 @@
     --logo-shade: var(--color-tomato-500);
     --logo-dot: var(--color-tomato-500);
     --logo-dot-shade: var(--color-tomato-800);
+    --logo-tag: var(--color-oak-50);
     --logo-name: var(--color-oak-300);
     --logo-star: var(--color-oak-300);
     display: block;
     width: auto;
-    aspect-ratio: 772.2 / 290.9;
+    aspect-ratio: 903.4 / 284.4;
     overflow: visible;
   }
   .logo-word { fill: var(--logo-word); }
   .logo-shade { fill: var(--logo-shade); }
   .logo-dot { fill: var(--logo-dot); }
   .logo-dot-shade { fill: var(--logo-dot-shade); }
+  .logo-tag { fill: var(--logo-tag); }
   .logo-name { fill: var(--logo-name); }
   .logo-star { fill: var(--logo-star); }
   .logo-word,
+  .logo-tag,
   .logo-name,
   .logo-star {
     transition: fill 0.45s;
   }
   .site-header[data-theme="light"] .logo {
     --logo-word: var(--color-char-900);
+    --logo-tag: var(--color-char-900);
     --logo-name: var(--color-tomato-500);
     --logo-star: var(--color-char-900);
   }
@@ -339,12 +343,17 @@
     border-radius: 999px;
   }
   .brand-logo {
-    height: 3.125rem;
+    height: 2.5rem;
     margin-block: -0.2rem;
     transition: transform 0.7s var(--ease-spring);
   }
   .brand:hover .brand-logo {
     transform: rotate(-3deg) scale(1.04);
+  }
+  @media (min-width: 360px) {
+    .brand-logo {
+      height: 3.125rem;
+    }
   }
   @media (min-width: 640px) {
     .brand-logo {
@@ -472,6 +481,16 @@
   }
   .lang-btn[aria-expanded="true"] .lang-chevron {
     transform: rotate(180deg);
+  }
+  /* Smallest phones (320px): tighten the header so logo, language and menu buttons all fit. */
+  @media (max-width: 359.98px) {
+    .nav-shell {
+      gap: 0.5rem;
+    }
+    .lang-btn {
+      gap: 0.3rem;
+      padding-inline: 0.6rem;
+    }
   }
   .lang-menu {
     position: absolute;
@@ -774,11 +793,16 @@
     animation: spin 28s linear infinite;
   }
   .footer-brand {
-    display: inline-block;
+    display: block;
+    width: fit-content;
+    max-width: 100%;
     border-radius: 1rem;
   }
+  /* 6rem tall on wide screens, shrinks with the column on small phones. */
   .footer-logo {
-    height: 6rem;
+    width: 19rem;
+    max-width: 100%;
+    height: auto;
   }
   .status-dot {
     position: relative;
@@ -1067,6 +1091,44 @@
     box-shadow:
       0 0 0 1px var(--color-oak-300),
       var(--shadow-card);
+  }
+  /* Category switched off in menu.mjs (available: false): visible but greyed out, no add button. */
+  .menu-card.is-off {
+    background: var(--color-char-50);
+    border: 1px dashed rgb(17 20 19 / 0.14);
+    box-shadow: none;
+    transform: none;
+  }
+  .is-off :is(.card-index, h4, .item-sub, .price-tag, .chip, .badge) {
+    opacity: 0.5;
+    filter: grayscale(1);
+  }
+  .sold-out {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.25rem;
+    padding: 0 0.9rem;
+    border-radius: 999px;
+    background: #f6e3d6;
+    color: #8a3f1d;
+    font-size: 0.8rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .cat-notice {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+    padding: 0.55rem 1rem;
+    border-radius: 1rem;
+    background: #f6e3d6;
+    color: #8a3f1d;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+  .menu-tab.is-off:not([aria-current="true"]) {
+    color: var(--color-char-400);
   }
   .card-index {
     font-size: 0.7rem;
@@ -1593,6 +1655,12 @@
     border: 1px solid rgb(17 20 19 / 0.06);
     box-shadow: var(--shadow-card);
   }
+  /* Smallest phones: icon above the text so the "Open in Google Maps" button still fits. */
+  @media (max-width: 359.98px) {
+    .info-card {
+      flex-direction: column;
+    }
+  }
   .info-icon {
     display: grid;
     place-items: center;
@@ -1920,6 +1988,19 @@
   }
   .lang-hint[data-leaving] {
     animation: toast-out 0.35s ease forwards;
+  }
+  /* Phones: switch button on its own row so the text isn't squeezed and the close button stays on screen. */
+  @media (max-width: 479.98px) {
+    .lang-hint {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      row-gap: 0.5rem;
+      padding-block: 0.75rem;
+    }
+    .lang-hint > a {
+      grid-area: 2 / 2;
+      justify-self: start;
+    }
   }
   @media (min-width: 768px) {
     .lang-hint {
