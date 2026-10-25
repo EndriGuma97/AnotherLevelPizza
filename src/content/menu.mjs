@@ -14,11 +14,91 @@ export const ingredients = {
   lettuce: { sq: 'Sallatë jeshile', en: 'Lettuce', it: 'Lattuga' },
   onion: { sq: 'Qepë', en: 'Onion', it: 'Cipolla' },
   pita: { sq: 'Pite', en: 'Pita', it: 'Pita' },
+  pizzaSauce: { sq: 'Salcë pice', en: 'Pizza sauce', it: 'Salsa per pizza' },
+  spicyPizzaSauce: { sq: 'Salcë pice pikante', en: 'Spicy pizza sauce', it: 'Salsa per pizza piccante' },
+  gorgonzola: { sq: 'Gorgonzola', en: 'Gorgonzola', it: 'Gorgonzola' },
+  whiteCheese: { sq: 'Djathë i bardhë', en: 'White cheese', it: 'Formaggio bianco' },
+  peppers: { sq: 'Speca', en: 'Peppers', it: 'Peperoni' },
+  tuna: { sq: 'Tuna', en: 'Tuna', it: 'Tonno' },
+  mushrooms: { sq: 'Kërpudha', en: 'Mushrooms', it: 'Funghi' },
+  spicySalami: { sq: 'Sallam pikant', en: 'Spicy salami', it: 'Salame piccante' },
 };
+
+// Pizza sizes as printed on the menu board: "M" (medium) and "F" (family).
+export const sizes = {
+  m: { sq: 'Mesatare', en: 'Medium', it: 'Media' },
+  f: { sq: 'Familjare', en: 'Family', it: 'Famiglia' },
+};
+
+// Each size of a pizza is its own orderable line: "margarita-m" → "Margarita (Mesatare)".
+export const sizedId = (item, size) => `${item.id}-${size}`;
+export const sizedName = (item, size) =>
+  Object.fromEntries(Object.entries(item.name).map(([lang, name]) => [lang, `${name} (${sizes[size][lang]})`]));
 
 const garnish = ['fries', 'tzatziki', 'pita'];
 
 export const categories = [
+  {
+    id: 'pizza',
+    icon: 'pizza',
+    name: { sq: 'Pica', en: 'Pizza', it: 'Pizza' },
+    blurb: {
+      sq: 'Çdo picë vjen në dy masa: mesatare ose familjare.',
+      en: 'Every pizza comes in two sizes: medium or family.',
+      it: 'Ogni pizza in due formati: media o famiglia.',
+    },
+    items: [
+      {
+        id: 'margarita',
+        sizes: { m: 500, f: 700 },
+        name: { sq: 'Margarita', en: 'Margherita', it: 'Margherita' },
+        ingredients: ['pizzaSauce', 'gouda'],
+      },
+      {
+        id: 'chicken-ham-pizza',
+        sizes: { m: 750, f: 950 },
+        name: { sq: 'Proshutë', en: 'Chicken Ham', it: 'Prosciutto di Pollo' },
+        ingredients: ['pizzaSauce', 'chickenHam', 'gouda'],
+      },
+      {
+        id: 'four-cheeses',
+        sizes: { m: 750, f: 950 },
+        name: { sq: '4 Djathrat', en: 'Four Cheeses', it: 'Quattro Formaggi' },
+        ingredients: ['pizzaSauce', 'gorgonzola', 'gouda', 'whiteCheese'],
+      },
+      {
+        id: 'spicy-pizza',
+        sizes: { m: 750, f: 950 },
+        spicy: true,
+        name: { sq: 'Pikante', en: 'Spicy', it: 'Piccante' },
+        ingredients: ['spicyPizzaSauce', 'peppers', 'gouda'],
+      },
+      {
+        id: 'tuna-pizza',
+        sizes: { m: 800, f: 950 },
+        name: { sq: 'Tuna', en: 'Tuna', it: 'Tonno' },
+        ingredients: ['pizzaSauce', 'tuna', 'onion', 'gouda'],
+      },
+      {
+        id: 'speciale',
+        sizes: { m: 850, f: 1100 },
+        name: { sq: 'Speciale', en: 'Speciale', it: 'Speciale' },
+        ingredients: ['pizzaSauce', 'chickenHam', 'olives', 'spicySalami', 'peppers', 'gouda', 'mushrooms'],
+      },
+      {
+        id: 'capricciosa',
+        sizes: { m: 750, f: 1000 },
+        name: { sq: 'Kapricioza', en: 'Capricciosa', it: 'Capricciosa' },
+        ingredients: ['pizzaSauce', 'chickenHam', 'olives', 'peppers', 'mushrooms'],
+      },
+      {
+        id: 'mushroom-pizza',
+        sizes: { m: 750, f: 900 },
+        name: { sq: 'Kërpudhë', en: 'Mushrooms', it: 'Funghi' },
+        ingredients: ['pizzaSauce', 'mushrooms', 'gouda'],
+      },
+    ],
+  },
   {
     id: 'fastfood',
     icon: 'sandwich',
@@ -209,9 +289,14 @@ export const categories = [
   },
 ];
 
-// Flat lookup of everything that can be added to an online order (fixed-price items in available categories).
+// Flat lookup of everything that can be added to an online order (fixed-price items and each pizza size, in available categories).
 export const orderableItems = Object.fromEntries(
   categories.filter((c) => c.available !== false).flatMap((c) =>
-    c.items.filter((i) => typeof i.price === 'number').map((i) => [i.id, { price: i.price, name: i.name, category: c.id }]),
+    c.items.flatMap((i) => {
+      if (i.sizes) {
+        return Object.entries(i.sizes).map(([s, price]) => [sizedId(i, s), { price, name: sizedName(i, s), category: c.id }]);
+      }
+      return typeof i.price === 'number' ? [[i.id, { price: i.price, name: i.name, category: c.id }]] : [];
+    }),
   ),
 );

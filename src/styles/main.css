@@ -1233,15 +1233,48 @@
     border-radius: 999px;
     background: var(--color-oak-100);
   }
-  .in-cart .add-btn {
+  .qty.in-cart .add-btn {
     display: none;
   }
-  .in-cart .stepper,
+  .qty.in-cart .stepper,
   .stepper-dark {
     display: inline-flex;
   }
-  .in-cart .stepper {
+  .qty.in-cart .stepper {
     animation: pop 0.5s var(--ease-spring);
+  }
+  /* Pizza sizes: one row per size, each with its own add button / stepper. */
+  .sizes {
+    display: grid;
+    gap: 0.5rem;
+  }
+  .size-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    min-height: 3.4rem;
+    padding: 0.3rem 0.3rem 0.3rem 1rem;
+    border-radius: 999px;
+    background: var(--color-char-50);
+  }
+  .size-label {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 0.5rem;
+    min-width: 0;
+  }
+  .size-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--color-char-900);
+  }
+  .size-price {
+    font-size: 0.85rem;
+    color: var(--color-char-500);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
   }
   .step-btn {
     display: grid;

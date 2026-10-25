@@ -1,4 +1,4 @@
-import { categories, ingredients } from './menu.mjs';
+import { categories, ingredients, sizedId, sizedName, sizes } from './menu.mjs';
 import { googleRating, mentions } from './reviews.mjs';
 
 export const LANGS = ['sq', 'en', 'it'];
@@ -121,11 +121,11 @@ export const ui = {
   },
   'menu.pizza.title': { sq: 'Pica nga furra jonë', en: 'Pizza from our oven', it: 'Pizza dal nostro forno' },
   'menu.pizza.text': {
-    sq: 'Margarita, pica e shtëpisë “Another”, pica me salçiçe e më shumë. Pyetni për zgjedhjen e ditës.',
-    en: 'Margherita, our house “Another” pizza, sausage pizza and more. Ask us for today’s selection.',
-    it: 'Margherita, la nostra pizza della casa “Another”, pizza con salsiccia e altro. Chiedici la selezione del giorno.',
+    sq: 'Margarita, Kapricioza, 4 Djathrat, Speciale e më shumë — në masë mesatare ose familjare, gati për porosi online.',
+    en: 'Margherita, Capricciosa, Four Cheeses, Speciale and more — medium or family size, ready to order online.',
+    it: 'Margherita, Capricciosa, Quattro Formaggi, Speciale e altre — formato medio o famiglia, da ordinare online.',
   },
-  'menu.pizza.cta': { sq: 'Pyet në WhatsApp', en: 'Ask on WhatsApp', it: 'Chiedi su WhatsApp' },
+  'menu.pizza.cta': { sq: 'Shiko picat', en: 'See the pizzas', it: 'Vedi le pizze' },
   'menu.add': { sq: 'Shto', en: 'Add', it: 'Aggiungi' },
   'menu.spicy': { sq: 'Pikant', en: 'Spicy', it: 'Piccante' },
   'menu.inStore': { sq: 'Pyetni në lokal', en: 'Ask in store', it: 'Chiedi al locale' },
@@ -306,11 +306,6 @@ export const ui = {
     en: 'Hi Another Level! I’d like to place an order:',
     it: 'Ciao Another Level! Vorrei fare un ordine:',
   },
-  'wa.pizza': {
-    sq: 'Përshëndetje! Çfarë picash keni sot?',
-    en: 'Hi! Which pizzas do you have today?',
-    it: 'Ciao! Quali pizze avete oggi?',
-  },
 };
 
 // Flattens UI copy + menu copy into one { key: string } dictionary per language.
@@ -322,6 +317,7 @@ export function dictFor(lang) {
   }
   for (const m of mentions) out[`mention.${m.id}`] = m.label[lang];
   for (const [id, values] of Object.entries(ingredients)) out[`ing.${id}`] = values[lang];
+  for (const [id, values] of Object.entries(sizes)) out[`size.${id}`] = values[lang];
   for (const cat of categories) {
     out[`cat.${cat.id}.name`] = cat.name[lang];
     out[`cat.${cat.id}.blurb`] = cat.blurb[lang];
@@ -331,6 +327,8 @@ export function dictFor(lang) {
       out[`item.${item.id}.sub`] = lang === 'sq' ? '' : item.name.sq;
       if (item.portion) out[`item.${item.id}.portion`] = item.portion[lang];
       if (item.note) out[`item.${item.id}.note`] = item.note[lang];
+      // Cart lines, toasts and aria-labels name the size too.
+      for (const s of Object.keys(item.sizes || {})) out[`item.${sizedId(item, s)}.name`] = sizedName(item, s)[lang];
     }
   }
   return out;

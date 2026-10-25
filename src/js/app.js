@@ -447,12 +447,13 @@ function setQty(id, qty, { announce = false } = {}) {
 }
 
 function syncCart({ bump = false } = {}) {
-  for (const card of $$('[data-item]')) {
-    const qty = cart.get(card.dataset.item) || 0;
-    card.classList.toggle('in-cart', qty > 0);
-    const out = $('[data-count-for]', card);
-    if (out) out.textContent = qty;
+  // One counter per orderable line (a pizza card has one per size); the card is highlighted if any is in the cart.
+  for (const out of $$('[data-count-for]')) {
+    const qty = cart.get(out.dataset.countFor) || 0;
+    out.textContent = qty;
+    out.closest('.qty').classList.toggle('in-cart', qty > 0);
   }
+  for (const card of $$('[data-item]')) card.classList.toggle('in-cart', !!$('.qty.in-cart', card));
   const count = cartCount();
   for (const badge of $$('[data-cart-count]')) {
     badge.textContent = count;

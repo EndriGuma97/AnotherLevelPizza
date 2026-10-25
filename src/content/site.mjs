@@ -21,6 +21,6 @@ export const site = {
   facebook: 'https://www.facebook.com/profile.php?id=100071159112562',
   wolt: 'https://wolt.com/en/alb/sarande/restaurant/another-level-pizza',
   // Open every day; closing time is after midnight.
-  hours: { opens: '11:00', closes: '01:30' },
+  hours: { opens: '11:00', closes: '00:30' },
   timezone: 'Europe/Tirane',
 };

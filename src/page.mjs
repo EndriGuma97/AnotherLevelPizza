@@ -1,5 +1,5 @@
 import { site } from './content/site.mjs';
-import { categories } from './content/menu.mjs';
+import { categories, sizedId } from './content/menu.mjs';
 import { googleRating, mentions, reviews } from './content/reviews.mjs';
 import { LANGS, LANG_META, dictFor, formatPrice } from './content/i18n.mjs';
 import { icon, sealSvg } from './icons.mjs';
@@ -51,16 +51,23 @@ function picture(name, spec, { sizes, alt, altKey, imgClass = '', loading = 'laz
 
 function jsonLd(lang, d) {
   const path = LANG_META[lang].path;
-  const offer = (item) => {
-    if (typeof item.price === 'number') return { '@type': 'Offer', price: String(item.price), priceCurrency: 'ALL' };
+  const offer = (item, extra) => {
+    // One offer per pizza size, named after the size.
+    if (item.sizes) {
+      return Object.entries(item.sizes).map(([s, p]) => ({ '@type': 'Offer', name: d[`size.${s}`], price: String(p), priceCurrency: 'ALL', ...extra }));
+    }
+    if (typeof item.price === 'number') return { '@type': 'Offer', price: String(item.price), priceCurrency: 'ALL', ...extra };
     const values = item.priceRange || item.priceOptions;
     return {
       '@type': 'Offer',
       priceSpecification: { '@type': 'PriceSpecification', minPrice: values[0], maxPrice: values[values.length - 1], priceCurrency: 'ALL' },
+      ...extra,
     };
   };
   // Only advertise what can be ordered right now (e.g. no "Grill" while the grill is closed).
-  const openPrices = openCategories.flatMap((c) => c.items.flatMap((i) => i.priceRange || i.priceOptions || [i.price]));
+  const openPrices = openCategories.flatMap((c) =>
+    c.items.flatMap((i) => (i.sizes ? Object.values(i.sizes) : i.priceRange || i.priceOptions || [i.price])),
+  );
   const data = {
     '@context': 'https://schema.org',
     '@type': 'Restaurant',
@@ -111,7 +118,7 @@ function jsonLd(lang, d) {
           '@type': 'MenuItem',
           name: item.name[lang],
           ...(item.ingredients.length ? { description: item.ingredients.map((i) => d[`ing.${i}`]).join(', ') } : {}),
-          offers: cat.available === false ? { ...offer(item), availability: 'https://schema.org/OutOfStock' } : offer(item),
+          offers: offer(item, cat.available === false ? { availability: 'https://schema.org/OutOfStock' } : {}),
         })),
       })),
     },
@@ -155,9 +162,19 @@ export function renderPage({ lang, assets, buildYear }) {
     ['visit', 'nav.visit'],
   ];
 
+  // Add button that turns into a − n + stepper once the line is in the cart.
+  const qtyControl = (id) => `<div class="qty">
+          <button type="button" class="add-btn" data-add="${id}" aria-label="${t('menu.add')}: ${t(`item.${id}.name`)}">${icon('plus', 'size-4')}${T('menu.add')}</button>
+          <div class="stepper">
+            <button type="button" class="step-btn" data-dec="${id}" aria-label="${t('a11y.decrease')}" data-i18n-attr="aria-label:a11y.decrease">${icon('minus', 'size-4')}</button>
+            <span class="step-count" data-count-for="${id}">0</span>
+            <button type="button" class="step-btn" data-inc="${id}" aria-label="${t('a11y.increase')}" data-i18n-attr="aria-label:a11y.increase">${icon('plus', 'size-4')}</button>
+          </div>
+        </div>`;
+
   const itemCard = (item, index, off) => {
     const orderable = typeof item.price === 'number' && !off;
-    const values = typeof item.price === 'number' ? [item.price] : item.priceRange || item.priceOptions;
+    const values = item.sizes ? Object.values(item.sizes) : typeof item.price === 'number' ? [item.price] : item.priceRange || item.priceOptions;
     const sep = item.priceRange ? '–' : ' / ';
     const badges = [
       item.spicy ? `<span class="badge badge-spicy">${icon('flame', 'size-3.5')}${T('menu.spicy')}</span>` : '',
@@ -165,17 +182,30 @@ export function renderPage({ lang, assets, buildYear }) {
       item.note ? `<span class="badge badge-soft">${T(`item.${item.id}.note`)}</span>` : '',
     ].join('');
     const control = orderable
-      ? `<div class="qty">
-          <button type="button" class="add-btn" data-add="${item.id}" aria-label="${t('menu.add')}: ${t(`item.${item.id}.name`)}">${icon('plus', 'size-4')}${T('menu.add')}</button>
-          <div class="stepper">
-            <button type="button" class="step-btn" data-dec="${item.id}" aria-label="${t('a11y.decrease')}" data-i18n-attr="aria-label:a11y.decrease">${icon('minus', 'size-4')}</button>
-            <span class="step-count" data-count-for="${item.id}">0</span>
-            <button type="button" class="step-btn" data-inc="${item.id}" aria-label="${t('a11y.increase')}" data-i18n-attr="aria-label:a11y.increase">${icon('plus', 'size-4')}</button>
-          </div>
-        </div>`
+      ? qtyControl(item.id)
       : off
         ? `<span class="sold-out" data-i18n="menu.unavailable">${t('menu.unavailable')}</span>`
         : `<span class="text-xs font-semibold text-char-500" data-i18n="menu.inStore">${t('menu.inStore')}</span>`;
+    // Pizzas: one row per size, each added to the order on its own.
+    const footer =
+      item.sizes && !off
+        ? `<div class="mt-auto pt-5">
+          ${badges ? `<div class="mb-3 flex flex-wrap gap-1.5">${badges}</div>` : ''}
+          <ul class="sizes" role="list">
+            ${Object.entries(item.sizes)
+              .map(
+                ([s, p]) => `<li class="size-row">
+              <span class="size-label"><span class="size-name" data-i18n="size.${s}">${t(`size.${s}`)}</span><span class="size-price"><span data-prices="${p}">${price(p)}</span> ${T('menu.currency')}</span></span>
+              ${qtyControl(sizedId(item, s))}
+            </li>`,
+              )
+              .join('')}
+          </ul>
+        </div>`
+        : `<div class="mt-auto flex items-center justify-between gap-3 pt-5">
+          <div class="flex flex-wrap gap-1.5">${badges}</div>
+          ${control}
+        </div>`;
     return `<li class="reveal h-full">
       <article class="menu-card${off ? ' is-off' : ''}" data-item="${item.id}">
         <div class="flex items-start justify-between gap-4">
@@ -191,10 +221,7 @@ export function renderPage({ lang, assets, buildYear }) {
             ? `<ul class="mt-4 flex flex-wrap gap-1.5" role="list">${item.ingredients.map((i) => `<li class="chip" data-i18n="ing.${i}">${t(`ing.${i}`)}</li>`).join('')}</ul>`
             : ''
         }
-        <div class="mt-auto flex items-center justify-between gap-3 pt-5">
-          <div class="flex flex-wrap gap-1.5">${badges}</div>
-          ${control}
-        </div>
+        ${footer}
       </article>
     </li>`;
   };
@@ -415,7 +442,7 @@ ${LANGS.filter((l) => l !== lang).map((l) => `<meta property="og:locale:alternat
             <div>
               <h3 class="font-display text-xl font-bold tracking-tight" data-i18n="menu.pizza.title">${t('menu.pizza.title')}</h3>
               <p class="mt-2 text-sm/relaxed text-white/70" data-i18n="menu.pizza.text">${t('menu.pizza.text')}</p>
-              <a href="${wa('wa.pizza')}" data-wa="wa.pizza" target="_blank" rel="noopener" class="btn btn-oak btn-sm mt-5">${icon('whatsapp', 'size-[1.1rem]')}${T('menu.pizza.cta')}</a>
+              <a href="#cat-pizza" class="btn btn-oak btn-sm mt-5">${T('menu.pizza.cta')}${icon('arrowDown', 'size-[1.1rem] icon-nudge-down')}</a>
             </div>
           </div>
         </aside>
